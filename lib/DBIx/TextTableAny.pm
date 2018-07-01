@@ -98,8 +98,6 @@ Sample result (default backend is L<Text::Table::Tiny>):
  | Name  | Rank     | Serial   |
  +-------+----------+----------+
  | alice | pvt      | 123456   |
- | bob   | cpl      | 98765321 |
- | carol | brig gen | 8745     |
  +-------+----------+----------+
 
 Selecting all rows:
@@ -118,19 +116,28 @@ Sample result:
 
 Picking another backend (and setting other options):
 
- use DBIx::TextTableAny backend => 'Text::Table::CSV', header_row => 1;
+ use DBIx::TextTableAny backend => 'Text::Table::CSV', header_row => 0;
 
  my $sth = $dbh->prepare("SELECT * FROM member");
  $sth->execute;
 
  print $sth->fetchall_texttable;
 
-Sample result:
+Sample result (note that we instructed the header row to be omitted):
 
- Name,Rank,Serial
- alice,pvt,123456
- bob,cpl,98765321
- carol,"brig gen",8745
+ "alice","pvt","123456"
+ "bob","cpl","98765321"
+ "carol,"brig gen","8745"
+
+If you want to change backend/options for subsequent tables, you can do this:
+
+ DBIx::TextTableAny->import(backend => 'Text::Table::TSV', header_row => 0);
+ print $dbh->selectrow_texttable("more query ...");
+
+or:
+
+ $DBIx::TextTableAny::opts{header_row} = 0; # you can just change one option
+ print $dbh->selectrow_texttable("more query ...");
 
 
 =head1 DESCRIPTION
